@@ -51,11 +51,11 @@ To start, lets write the easy stuff. Since `Compose` is a `newtype` wrapper, we 
 ``` Haskell
 instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
-  (Compose fga2b) <*> (Compose fga) = Compose $ _omg
+  (Compose fga2b) <*> (Compose fga) = Compose $ _scary
 ```
 with the types:
 ``` Haskell
-_omg :: f (g b) 
+_scary :: f (g b) 
 fga2b :: f (g (a -> b)) 
 fga :: f (g a)
 ```
