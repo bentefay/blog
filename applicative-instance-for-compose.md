@@ -151,7 +151,7 @@ Lets get our point free on:
      omg :: f (g (a -> b)) -> f (g a -> g b)
      omg fga2b = wtf <$> fga2b
      wtf :: g (a -> b) -> g a -> g b
-     wtf = <*>
+     wtf = (<*>)
 ```
 
 Yum!
