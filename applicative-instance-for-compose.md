@@ -91,7 +91,7 @@ fga :: f (g a)
 _fga2gb :: f (g a -> g b)
 ```
 
-We've already used `fga`, so that leaves us with `fga2b`. Can we transform `fga2b :: f (g (a -> b)` into `f (g a -> g b)`?
+We've already used `fga`, so that leaves us with `fga2b`. Can we transform `fga2b :: f (g (a -> b))` into `f (g a -> g b)`?
 
 Lets try to do it in a separate function called `lessScary`:
 
