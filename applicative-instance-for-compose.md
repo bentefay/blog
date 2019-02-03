@@ -68,9 +68,8 @@ Lets try to break the problem down. We need to figure out what `_scary` should b
 3) `_scary = ? <$> fga2b`
 4) `_scary = ? <$> fga`
 
-It can't be `<$>` ("fmap"), as we'll end up inside `f` twice, once for `fga` and once for `fga2b`. So it must be `<*>`.
+It can't be `<$>` ("fmap"), as we'll end up inside `f` twice, once for `fga` and once for `fga2b`. So it must be `<*>`:
 
-So:
 ``` Haskell
 _scary :: f (g b)
 _scary = ? <*> ?
