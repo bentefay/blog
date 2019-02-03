@@ -105,7 +105,7 @@ Lets break that out into a function:
 This seems a little more manageable. We need to transform the contents of `f` from `g (a -> b)` into `g a -> g b`. That feels like a job for `<$>`!
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
+(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
      lessScary fga2b = _wtf <$> fga2b
@@ -146,7 +146,7 @@ But there's a problem. When we come back and look at this code, we'll be able to
 Lets get our point free on:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
+(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
      omg fga2b = wtf <$> fga2b
@@ -157,7 +157,7 @@ Lets get our point free on:
 Yum!
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
+(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
      omg fga2b = ((<*>) <$>) fga2b
@@ -166,7 +166,7 @@ Yum!
 Oh yea!
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
+(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
      omg fga2b = (<*>) <$> fga2b
