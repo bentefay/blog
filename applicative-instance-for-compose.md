@@ -2,7 +2,7 @@
 
 The `Applicative` instance for `Compose` is _much_ harder to implement than you might expect:
 
-```
+``` Haskell
 data Compose f g a = Compose (f (g a))
 
 instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
@@ -16,18 +16,18 @@ Well, I was in agony for what felt like a brain-melting hour before my colleague
 
 In fairness, `pure` is easy enough.
 
-```
+``` Haskell
 instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   pure :: a -> Compose f g a
 ```
 
 We just need to put an `a` in a `g`, and then put that `g a` in an `f`. `g` and `f` are `Applicatives`, so we can call `pure`  on each `Applicative` and then wrap the result in `Compose`: 
-```
+``` Haskell
 pure a = Compose $ pure $ pure a
 ```
 
 Or, if we're feeling a bit point free:
-```
+``` Haskell
 pure = Compose . pure . pure
 ```
 
@@ -35,7 +35,7 @@ In contrast `<*>` ("apply", or more whimsically, "spaceship") is _hard_.
 
 Lets look at that signature again:
 
-```
+``` Haskell
 instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
 ```
@@ -48,11 +48,11 @@ To practice being more piecemeal with Haskell, let's try to walk through this in
 
 To start, lets write the easy stuff. We need to unwrap the contents our our two `Compose` arguments, and then put the result back in `Compose` at the end:
 
-```
+``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ _
 ```
 with the types:
-```
+``` Haskell
 _ :: f (g b) 
 fga2b :: f (g (a -> b)) 
 fga :: f (g a)
@@ -73,11 +73,11 @@ We need to return the type `f (g b)`. Given we're calling `<*>`, where `<*> :: f
 
 Now we're getting somewhere:
 
-```
+``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ _ <*> fga
 ```
 with the types:
-```
+``` Haskell
 _ :: f (g a -> g b).
 ```
 
@@ -85,7 +85,7 @@ We've already used `fga`, so that leaves us to somehow transform `fga2b :: f (g 
 
 Lets break that out into a function:
 
-```
+``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
@@ -94,20 +94,20 @@ Lets break that out into a function:
 
 This seems a little more manageable. We need to transform the contents of `f` from `g (a -> b)` into `g a -> g b`. That feels like a job for `<$>`!
 
-```
+``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
      omg fga2b = _ <$> fga2b
 ```
 with the types:
-```
+``` Haskell
 _ :: g (a -> b) -> (g a -> g b)
 ```
 
 Yes yes yes! Lets break that `_` out into another function:
 
-```
+``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
@@ -120,7 +120,7 @@ I've dropped the brackets around `(g a -> g b)`, since that's actually the same 
 
 You know what `g (a -> b) -> g a -> g b` looks like? Yup! It looks like `<*>` for `g`:
 
-```
+``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
@@ -135,7 +135,7 @@ But there's a problem. When we come back and look at this code, we'll be able to
 
 Lets get our point free on:
 
-```
+``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
@@ -146,7 +146,7 @@ Lets get our point free on:
 
 Yum!
 
-```
+``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
@@ -155,7 +155,7 @@ Yum!
 
 Oh yea!
 
-```
+``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
@@ -164,7 +164,7 @@ Oh yea!
 
 Now we're talking!
 
-```
+``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ ((<*>) <$> fga2b) <*> fga
 ```
 
