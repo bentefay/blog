@@ -55,9 +55,9 @@ instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
 ```
 with the types:
 ``` Haskell
-_scary :: f (g b) 
 fga2b :: f (g (a -> b)) 
 fga :: f (g a)
+_scary :: f (g b) 
 ```
 
 The good news is that we're now just dealing with `f`, `g`, `a` and `b`. The bad news is that it's not obvious what to do next. 
