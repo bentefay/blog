@@ -1,3 +1,5 @@
+# Incrementally solving the `Applicative` instance for `Compose`
+
 The `Applicative` instance for `Compose` is much harder than it looks:
 
 ```
