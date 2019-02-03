@@ -1,6 +1,6 @@
 # Incrementally solving the `Applicative` instance for `Compose`
 
-The `Applicative` instance for `Compose` is much harder than it looks:
+The `Applicative` instance for `Compose` is _much_ harder to implement than you might expect:
 
 ```
 data Compose f g a = Compose (f (g a))
@@ -9,7 +9,10 @@ instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   pure :: a -> Compose f g a
   (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
 ```
-I was in agony for what felt like a brain-melting hour before my colleague put me out of my misery, by solving the hardest part for me.
+
+There isn't much going on, right? Just some `Compose`, `f`, `g, `a` and `b`.
+
+Well, I was in agony for what felt like a brain-melting hour before my colleague put me out of my misery and solved the hardest part for me.
 
  `pure` is easy enough. We just need to put `a` in a `g` and then in an `f`. `g` and `f` are `Applicatives`, so we can call `pure`  on each `Applicative` and then wrap the result in `Compose`: 
 ```
