@@ -51,55 +51,55 @@ To start, lets write the easy stuff. Since `Compose` is a `newtype` wrapper, we 
 ``` Haskell
 instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
-  (Compose fga2b) <*> (Compose fga) = Compose $ _scary
+  (Compose fga2b) <*> (Compose fga) = Compose $ _fgb
 ```
 with the types:
 ``` Haskell
 fga2b :: f (g (a -> b)) 
 fga :: f (g a)
-_scary :: f (g b) 
+_fgb :: f (g b) 
 ```
 
 The good news is that we're now just dealing with `f`, `g`, `a` and `b`. The bad news is that it's not obvious what to do next. 
 
-Lets try to break the problem down. We need to figure out what `_scary` should be. Given `f` and `g` are `Applicative`s, we have four choices to start us off (ignoring `pure`, since the last thing we need is _more_ nested `Applicatives`):
-1) `_scary = ? <*> fga2b`
-2) `_scary = ? <*> fga`
-3) `_scary = ? <$> fga2b`
-4) `_scary = ? <$> fga`
+Lets try to break the problem down. We need to figure out what `_fgb` should be. Given `f` and `g` are `Applicative`s, we have four choices to start us off (ignoring `pure`, since the last thing we need is _more_ nested `Applicatives`):
+1) `_fgb = ? <*> fga2b`
+2) `_fgb = ? <*> fga`
+3) `_fgb = ? <$> fga2b`
+4) `_fgb = ? <$> fga`
 
 It can't be `<$>` ("fmap"), as we'll end up inside `f` twice, once for `fga` and once for `fga2b`. So it must be `<*>`:
 
 ``` Haskell
-_scary :: f (g b)
-_scary = ? <*> ?
+_fgb :: f (g b)
+_fgb = ? <*> ?
 ```
 
-Whatever `_scary` is, it needs to have a type of `f (g b)`. Given we're calling `<*>`, where `<*> :: f (a -> b) -> f a -> f b`, we probably need a non-function on the right. That means we have to start with option (3): `? <*> fga`. 
+Whatever `_fgb` is, it needs to have a type of `f (g b)`. Given we're calling `<*>`, where `<*> :: f (a -> b) -> f a -> f b`, we probably need a non-function on the right. That means we have to start with option (3): `_fgb = ? <*> fga`. 
 
 Now we're getting somewhere:
 
 ``` Haskell
 instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
-  (Compose fga2b) <*> (Compose fga) = Compose $ _omg <*> fga
+  (Compose fga2b) <*> (Compose fga) = Compose $ _fga2gb <*> fga
 ```
 with the types:
 ``` Haskell
 fga2b :: f (g (a -> b)) 
 fga :: f (g a)
-_omg :: f (g a -> g b)
+_fga2gb :: f (g a -> g b)
 ```
 
-We've already used `fga`, so that leaves us to somehow transform `fga2b :: f (g (a -> b)` into `f (g a -> g b)`.
+We've already used `fga`, so that leaves us to somehow transform `fga2b` from `f (g (a -> b)` into `f (g a -> g b)`.
 
 Lets break that out into a function:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
+(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
   where
-     omg :: f (g (a -> b)) -> f (g a -> g b)
-     omg fga2b = _ohboy
+     lessScary :: f (g (a -> b)) -> f (g a -> g b)
+     lessScary fga2b = _ohboy
 ```
 
 This seems a little more manageable. We need to transform the contents of `f` from `g (a -> b)` into `g a -> g b`. That feels like a job for `<$>`!
@@ -107,8 +107,8 @@ This seems a little more manageable. We need to transform the contents of `f` fr
 ``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
-     omg :: f (g (a -> b)) -> f (g a -> g b)
-     omg fga2b = _wtf <$> fga2b
+     lessScary :: f (g (a -> b)) -> f (g a -> g b)
+     lessScary fga2b = _wtf <$> fga2b
 ```
 with the types:
 ``` Haskell
@@ -120,8 +120,8 @@ Yes yes yes! Lets break that `_` out into another function:
 ``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
-     omg :: f (g (a -> b)) -> f (g a -> g b)
-     omg fga2b = wtf <$> fga2b
+     lessScary :: f (g (a -> b)) -> f (g a -> g b)
+     lessScary fga2b = wtf <$> fga2b
      wtf :: g (a -> b) -> g a -> g b
      wtf ga2b = _soclose
 ```
@@ -133,8 +133,8 @@ You know what `g (a -> b) -> g a -> g b` looks like? Yup! It looks like `<*>` fo
 ``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
-     omg :: f (g (a -> b)) -> f (g a -> g b)
-     omg fga2b = wtf <$> fga2b
+     lessScary :: f (g (a -> b)) -> f (g a -> g b)
+     lessScary fga2b = wtf <$> fga2b
      wtf :: g (a -> b) -> g a -> g b
      wtf ga2b = (ga2b <*>)
 ```
