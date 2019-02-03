@@ -49,7 +49,9 @@ To practice being more piecemeal with Haskell, let's try to walk through this in
 To start, lets write the easy stuff. We need to unwrap the contents our our two `Compose` arguments, and then put the result back in `Compose` at the end:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ _
+instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
+  (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
+  (Compose fga2b) <*> (Compose fga) = Compose $ _
 ```
 with the types:
 ``` Haskell
