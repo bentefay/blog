@@ -115,7 +115,7 @@ with the types:
 _wtf :: g (a -> b) -> (g a -> g b)
 ```
 
-Yes yes yes! Lets break that `_` out into another function:
+Yes yes yes! Lets break that `_wtf` out into another function:
 
 ``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
