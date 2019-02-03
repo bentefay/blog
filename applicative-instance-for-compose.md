@@ -118,7 +118,7 @@ _wtf :: g (a -> b) -> (g a -> g b)
 Yes yes yes! Lets break that `_wtf` out into another function:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
+(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
      lessScary fga2b = wtf <$> fga2b
@@ -131,7 +131,7 @@ I've dropped the brackets around `(g a -> g b)`, since that's actually the same 
 You know what `g (a -> b) -> g a -> g b` looks like? Yup! It looks like `<*>` for `g`:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
+(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
      lessScary fga2b = wtf <$> fga2b
