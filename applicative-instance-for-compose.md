@@ -10,15 +10,23 @@ instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
 ```
 
-There isn't much going on, right? Just some `Compose`, `f`, `g, `a` and `b`.
+There isn't much going on, right? Just some `Compose`, `f`, `g`, `a` and `b`.
 
-Well, I was in agony for what felt like a brain-melting hour before my colleague put me out of my misery and solved the hardest part for me.
+Well, I was in agony for what felt like a brain-melting hour before my colleague put me out of my misery and solved the hardest part for me. Just another day in the life of learning Haskell.
 
- `pure` is easy enough. We just need to put `a` in a `g` and then in an `f`. `g` and `f` are `Applicatives`, so we can call `pure`  on each `Applicative` and then wrap the result in `Compose`: 
+In fairness, `pure` is easy enough.
+
+```
+instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
+  pure :: a -> Compose f g a
+```
+
+We just need to put an `a` in a `g`, and then put that `g a` in an `f`. `g` and `f` are `Applicatives`, so we can call `pure`  on each `Applicative` and then wrap the result in `Compose`: 
 ```
 pure a = Compose $ pure $ pure a
 ```
-Or if we're feeling a bit point free:
+
+Or, if we're feeling a bit point free:
 ```
 pure = Compose . pure . pure
 ```
