@@ -62,11 +62,11 @@ fga :: f (g a)
 
 The good news is that we're now just dealing with `f`, `g`, `a` and `b`. The bad news is that it's not obvious what to do next. 
 
-Lets try to break the problem down. Given `f` and `g` are `Applicative`s, we have four choices to start us off (ignoring `pure`, since the last thing we need is _more_ nested `Applicatives`):
-1) `? <*> fga2b`
-2) `? <*> fga`
-3) `? <$> fga2b`
-4) `? <$> fga`
+Lets try to break the problem down. We need to figure out what `_` should be. Given `f` and `g` are `Applicative`s, we have four choices to start us off (ignoring `pure`, since the last thing we need is _more_ nested `Applicatives`):
+1) `_ = ? <*> fga2b`
+2) `_ = ? <*> fga`
+3) `_ = ? <$> fga2b`
+4) `_ = ? <$> fga`
 
 It can't be `<$>` ("fmap"), as we'll end up inside `f` twice, once for `fga` and once for `fga2b`. So it must be `<*>`.
 
