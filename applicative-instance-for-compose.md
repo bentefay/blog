@@ -70,7 +70,13 @@ Lets try to break the problem down. We need to figure out what `_scary` should b
 
 It can't be `<$>` ("fmap"), as we'll end up inside `f` twice, once for `fga` and once for `fga2b`. So it must be `<*>`.
 
-We need to return the type `f (g b)`. Given we're calling `<*>`, where `<*> :: f (a -> b) -> f a -> f b`), we probably need a non-function on the right. That means we have to start with option (3): `? <*> fga`. 
+So:
+``` Haskell
+_scary :: f (g b)
+_scary = ? <*> ?
+```
+
+Whatever `_scary` is, it needs to have a type of `f (g b)`. Given we're calling `<*>`, where `<*> :: f (a -> b) -> f a -> f b`, we probably need a non-function on the right. That means we have to start with option (3): `? <*> fga`. 
 
 Now we're getting somewhere:
 
