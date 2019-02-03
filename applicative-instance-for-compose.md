@@ -136,14 +136,16 @@ You know what `g (a -> b) -> g a -> g b` looks like? Yup! It looks like `<*>` fo
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
      lessScary fga2b = wtf <$> fga2b
      wtf :: g (a -> b) -> g a -> g b
-     wtf ga2b = (ga2b <*>)
+     wtf ga2b = (<*>) ga2b
 ```
 
 That's it! We did it.
 
 But there's a problem. When we come back and look at this code, we'll be able to just read it, and _understand_ it, just like that, with no effort. Where's the fun in that?
 
-Lets get our point free on:
+Lets get our point free on. 
+
+First, lets drop `ga2b` from `(<*>)` in `wtf`, since it's the first parameter to both:
 
 ``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
@@ -156,14 +158,7 @@ Lets get our point free on:
 
 Yum!
 
-``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
-  where
-     omg :: f (g (a -> b)) -> f (g a -> g b)
-     omg fga2b = ((<*>) <$>) fga2b
-```
-
-Oh yea!
+Now, lets inline `wtf`:
 
 ``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
@@ -172,7 +167,9 @@ Oh yea!
      omg fga2b = (<*>) <$> fga2b
 ```
 
-Now we're talking!
+Nice!
+
+`omg` can be inlined too:
 
 ``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ ((<*>) <$> fga2b) <*> fga
