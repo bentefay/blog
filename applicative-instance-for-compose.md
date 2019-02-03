@@ -21,7 +21,7 @@ instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   pure :: a -> Compose f g a
 ```
 
-We just need to put an `a` in a `g`, and then put that `g a` in an `f`. Given `g` and `f` are `Applicatives`, so we can call `pure`  on each `Applicative` and then wrap the result in `Compose`: 
+We just need to put an `a` in a `g`, and then put that `g a` in an `f`. Given `g` and `f` are `Applicatives`, we can call `pure` to create one of each `Applicative` and then wrap the result in `Compose`: 
 ``` Haskell
 pure a = Compose $ pure $ pure a
 ```
