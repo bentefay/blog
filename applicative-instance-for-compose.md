@@ -80,11 +80,15 @@ Whatever `_scary` is, it needs to have a type of `f (g b)`. Given we're calling 
 Now we're getting somewhere:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ _omg <*> fga
+instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
+  (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
+  (Compose fga2b) <*> (Compose fga) = Compose $ _omg <*> fga
 ```
 with the types:
 ``` Haskell
-_omg :: f (g a -> g b).
+fga2b :: f (g (a -> b)) 
+fga :: f (g a)
+_omg :: f (g a -> g b)
 ```
 
 We've already used `fga`, so that leaves us to somehow transform `fga2b :: f (g (a -> b)` into `f (g a -> g b)`.
