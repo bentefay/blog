@@ -150,8 +150,8 @@ First, lets drop `ga2b` from `(<*>)` in `wtf`, since it's the first parameter to
 ``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
   where
-     omg :: f (g (a -> b)) -> f (g a -> g b)
-     omg fga2b = wtf <$> fga2b
+     lessScary :: f (g (a -> b)) -> f (g a -> g b)
+     lessScary fga2b = wtf <$> fga2b
      wtf :: g (a -> b) -> g a -> g b
      wtf = (<*>)
 ```
@@ -163,13 +163,13 @@ Now, lets inline `wtf`:
 ``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
   where
-     omg :: f (g (a -> b)) -> f (g a -> g b)
-     omg fga2b = (<*>) <$> fga2b
+     lessScary :: f (g (a -> b)) -> f (g a -> g b)
+     lessScary fga2b = (<*>) <$> fga2b
 ```
 
 Nice!
 
-`omg` can be inlined too:
+`lessScary` can be inlined too:
 
 ``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ ((<*>) <$> fga2b) <*> fga
