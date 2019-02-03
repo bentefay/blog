@@ -51,22 +51,22 @@ To start, lets write the easy stuff. Since `Compose` is a `newtype` wrapper, we 
 ``` Haskell
 instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
-  (Compose fga2b) <*> (Compose fga) = Compose $ _
+  (Compose fga2b) <*> (Compose fga) = Compose $ _omg
 ```
 with the types:
 ``` Haskell
-_ :: f (g b) 
+_omg :: f (g b) 
 fga2b :: f (g (a -> b)) 
 fga :: f (g a)
 ```
 
 The good news is that we're now just dealing with `f`, `g`, `a` and `b`. The bad news is that it's not obvious what to do next. 
 
-Lets try to break the problem down. We need to figure out what `_` should be. Given `f` and `g` are `Applicative`s, we have four choices to start us off (ignoring `pure`, since the last thing we need is _more_ nested `Applicatives`):
-1) `_ = ? <*> fga2b`
-2) `_ = ? <*> fga`
-3) `_ = ? <$> fga2b`
-4) `_ = ? <$> fga`
+Lets try to break the problem down. We need to figure out what `_scary` should be. Given `f` and `g` are `Applicative`s, we have four choices to start us off (ignoring `pure`, since the last thing we need is _more_ nested `Applicatives`):
+1) `_scary = ? <*> fga2b`
+2) `_scary = ? <*> fga`
+3) `_scary = ? <$> fga2b`
+4) `_scary = ? <$> fga`
 
 It can't be `<$>` ("fmap"), as we'll end up inside `f` twice, once for `fga` and once for `fga2b`. So it must be `<*>`.
 
@@ -75,11 +75,11 @@ We need to return the type `f (g b)`. Given we're calling `<*>`, where `<*> :: f
 Now we're getting somewhere:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ _ <*> fga
+(Compose fga2b) <*> (Compose fga) = Compose $ _omg <*> fga
 ```
 with the types:
 ``` Haskell
-_ :: f (g a -> g b).
+_omg :: f (g a -> g b).
 ```
 
 We've already used `fga`, so that leaves us to somehow transform `fga2b :: f (g (a -> b)` into `f (g a -> g b)`.
@@ -90,7 +90,7 @@ Lets break that out into a function:
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
-     omg fga2b = _
+     omg fga2b = _ohboy
 ```
 
 This seems a little more manageable. We need to transform the contents of `f` from `g (a -> b)` into `g a -> g b`. That feels like a job for `<$>`!
@@ -99,11 +99,11 @@ This seems a little more manageable. We need to transform the contents of `f` fr
 (Compose fga2b) <*> (Compose fga) = Compose $ omg fga2b <*> fga
   where
      omg :: f (g (a -> b)) -> f (g a -> g b)
-     omg fga2b = _ <$> fga2b
+     omg fga2b = _wtf <$> fga2b
 ```
 with the types:
 ``` Haskell
-_ :: g (a -> b) -> (g a -> g b)
+_wtf :: g (a -> b) -> (g a -> g b)
 ```
 
 Yes yes yes! Lets break that `_` out into another function:
@@ -114,7 +114,7 @@ Yes yes yes! Lets break that `_` out into another function:
      omg :: f (g (a -> b)) -> f (g a -> g b)
      omg fga2b = wtf <$> fga2b
      wtf :: g (a -> b) -> g a -> g b
-     wtf ga2b = _
+     wtf ga2b = _soclose
 ```
 
 I've dropped the brackets around `(g a -> g b)`, since that's actually the same as `g (a -> b) -> g a -> g b`.
