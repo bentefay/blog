@@ -3,7 +3,7 @@
 The `Applicative` instance for `Compose` is _much_ harder to implement than you might expect:
 
 ``` Haskell
-data Compose f g a = Compose (f (g a))
+newtype Compose f g a = Compose (f (g a))
 
 instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   pure :: a -> Compose f g a
@@ -46,7 +46,7 @@ For the life of me, I couldn't figure out how to solve this incrementally. That 
 
 To practice being more piecemeal with Haskell, let's try to walk through this in a way that my past self would have appreciated. 
 
-To start, lets write the easy stuff. We need to unwrap the contents our our two `Compose` arguments, and then put the result back in `Compose` at the end:
+To start, lets write the easy stuff. Since `Compose` is a `newtype` wrapper, we need to unwrap the contents of our two `Compose` arguments, and then put the result back in `Compose` at the end:
 
 ``` Haskell
 instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
@@ -60,7 +60,7 @@ fga2b :: f (g (a -> b))
 fga :: f (g a)
 ```
 
-The good news is that we're now just dealing with `f`, `g`, `a` and `b. The bad news is that it's not obvious what to do next. 
+The good news is that we're now just dealing with `f`, `g`, `a` and `b`. The bad news is that it's not obvious what to do next. 
 
 Lets try to break the problem down. Given `f` and `g` are `Applicative`s, we have four choices to start us off (ignoring `pure`, since the last thing we need is _more_ nested `Applicatives`):
 1) `? <*> fga2b`
