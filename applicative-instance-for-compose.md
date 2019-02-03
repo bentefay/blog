@@ -40,7 +40,9 @@ instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
 ```
 
-It doesn't look that hard, right? The problem is this: it's not obvious how you can reach through `f` and `g` to get hold of `a -> b` and `a` so that you can actually apply them to each other and end up with `f (g b)`. I couldn't figure out how to solve this incrementally. That left me trying to solve it all at once, _in my head_. I failed.
+It doesn't look that hard, right? The problem is this: how on earth do you reach through `f` __and__ `g`, to get hold of `a -> b` and `a`, so that you can actually apply them to each other and end up with `f (g b)`. 
+
+For the life of me, I couldn't figure out how to solve this incrementally. That left me trying to solve it all at once, _in my head_. I failed.
 
 To practice being more piecemeal with Haskell, let's try to walk through this in a way that my past self would have appreciated. 
 
