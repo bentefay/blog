@@ -91,9 +91,9 @@ fga :: f (g a)
 _fga2gb :: f (g a -> g b)
 ```
 
-We've already used `fga`, so that leaves us to somehow transform `fga2b` from `f (g (a -> b)` into `f (g a -> g b)`.
+We've already used `fga`, so that leaves us with `fga2b`. Can we transform `fga2b` (which has type `f (g (a -> b)`) into `f (g a -> g b)`?
 
-Lets break that out into a function:
+Lets try to do it in a separate function called `lessScary`:
 
 ``` Haskell
 (Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
