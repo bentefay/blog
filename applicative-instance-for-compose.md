@@ -1,6 +1,8 @@
 # Incrementally solving the `Applicative` instance for `Compose`
 
-The `Applicative` instance for `Compose` is _much_ harder to implement than you might expect:
+Here at Stacktrace, our team have been working our way through the incredible (and incredibly challenging) [https://github.com/data61/fp-course](data61 course). Last week we started working on the `Applicative` instance for `Compose`, and boy, it is _much_ harder to implement than you might expect.
+
+Lets have a look:
 
 ``` Haskell
 newtype Compose f g a = Compose (f (g a))
