@@ -53,7 +53,7 @@ To start, lets write the easy stuff. Since `Compose` is a `newtype` wrapper, we 
 ``` Haskell
 instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
-  (Compose fga2b) <*> (Compose fga) = Compose $ _fgb
+  Compose fga2b <*> Compose fga = Compose $ _fgb
 ```
 with the types:
 ``` Haskell
@@ -84,7 +84,7 @@ Now we're getting somewhere:
 ``` Haskell
 instance (Applicative f, Applicative g) => Applicative (Compose f g a) where
   (<*>) :: Compose f g (a -> b) -> Compose f g a -> Compose f g b
-  (Compose fga2b) <*> (Compose fga) = Compose $ _fga2gb <*> fga
+  Compose fga2b <*> Compose fga = Compose $ _fga2gb <*> fga
 ```
 with the types:
 ``` Haskell
@@ -98,7 +98,7 @@ We've already used `fga`, so that leaves us with `fga2b`. Can we transform `fga2
 Lets try to do it in a separate function called `lessScary`:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
+Compose fga2b <*> Compose fga = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
      lessScary fga2b = _ohboy
@@ -120,7 +120,7 @@ _wtf :: g (a -> b) -> (g a -> g b)
 Yes yes yes! Lets break that `_wtf` out into another function:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
+Compose fga2b <*> Compose fga = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
      lessScary fga2b = wtf <$> fga2b
@@ -133,7 +133,7 @@ Note that I've dropped the brackets around `(g a -> g b)` in `g (a -> b) -> (g a
 You know what `g (a -> b) -> g a -> g b` looks like? Yup! It looks like `<*>` for `g`:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
+Compose fga2b <*> Compose fga = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
      lessScary fga2b = wtf <$> fga2b
@@ -148,7 +148,7 @@ We _can_ take things further though, and condense a bunch of this code.
 First, lets drop `ga2b` from `(<*>)` in `wtf`, since it's the first parameter to both:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
+Compose fga2b <*> Compose fga = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
      lessScary fga2b = wtf <$> fga2b
@@ -161,7 +161,7 @@ Yum!
 Now, lets inline `wtf`:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
+Compose fga2b <*> Compose fga = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
      lessScary fga2b = (<*>) <$> fga2b
@@ -172,7 +172,7 @@ Nice!
 `lessScary` can be inlined too:
 
 ``` Haskell
-(Compose fga2b) <*> (Compose fga) = Compose $ ((<*>) <$> fga2b) <*> fga
+Compose fga2b <*> Compose fga = Compose $ (<*>) <$> fga2b <*> fga
 ```
 
 And there we have it. The `Applicative` instance for `Compose`. In incremental steps.
