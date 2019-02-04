@@ -141,11 +141,9 @@ You know what `g (a -> b) -> g a -> g b` looks like? Yup! It looks like `<*>` fo
 
 That's it! We did it.
 
-But there's a problem. When we come back and look at this code, we'll be able to read it, and _understand_ it.
+But there's a problem. When we come back and look at this code, we'll be able to _understand_ it.
 
 Where's the fun in that?
-
-Lets get our point free on. 
 
 First, lets drop `ga2b` from `(<*>)` in `wtf`, since it's the first parameter to both:
 
