@@ -123,9 +123,9 @@ Yes yes yes! Lets break that `_whatThe` out into another function:
 Compose fga2b <*> Compose fga = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
-     lessScary fga2b = wtf <$> fga2b
-     wtf :: g (a -> b) -> g a -> g b
-     wtf ga2b = _soclose
+     lessScary fga2b = whatThe <$> fga2b
+     whatThe :: g (a -> b) -> g a -> g b
+     whatThe ga2b = _soclose
 ```
 
 Note that I've dropped the brackets around `(g a -> g b)` in `g (a -> b) -> (g a -> g b)`, since that's actually the same as `g (a -> b) -> g a -> g b`.
@@ -136,29 +136,29 @@ You know what `g (a -> b) -> g a -> g b` looks like? Yup! It looks like `<*>` fo
 Compose fga2b <*> Compose fga = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
-     lessScary fga2b = wtf <$> fga2b
-     wtf :: g (a -> b) -> g a -> g b
-     wtf ga2b = (<*>) ga2b
+     lessScary fga2b = whatThe <$> fga2b
+     whatThe :: g (a -> b) -> g a -> g b
+     whatThe ga2b = (<*>) ga2b
 ```
 
 That's it! We did it.
 
 We _can_ take things further though, and condense a bunch of this code.
 
-First, lets drop `ga2b` from `(<*>)` in `wtf`, since it's the first parameter to both:
+First, lets drop `ga2b` from `(<*>)` in `whatThe`, since it's the first parameter to both:
 
 ``` Haskell
 Compose fga2b <*> Compose fga = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
-     lessScary fga2b = wtf <$> fga2b
-     wtf :: g (a -> b) -> g a -> g b
-     wtf = (<*>)
+     lessScary fga2b = whatThe <$> fga2b
+     whatThe :: g (a -> b) -> g a -> g b
+     whatThe = (<*>)
 ```
 
 Yum!
 
-Now, lets inline `wtf`:
+Now, lets inline `whatThe`:
 
 ``` Haskell
 Compose fga2b <*> Compose fga = Compose $ lessScary fga2b <*> fga
