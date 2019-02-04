@@ -126,7 +126,7 @@ Yes yes yes! Lets break that `_wtf` out into another function:
      wtf ga2b = _soclose
 ```
 
-I've dropped the brackets around `(g a -> g b)`, since that's actually the same as `g (a -> b) -> g a -> g b`.
+Note that I've dropped the brackets around `(g a -> g b)` in `g (a -> b) -> (g a -> g b)`, since that's actually the same as `g (a -> b) -> g a -> g b`.
 
 You know what `g (a -> b) -> g a -> g b` looks like? Yup! It looks like `<*>` for `g`:
 
