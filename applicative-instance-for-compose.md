@@ -65,16 +65,16 @@ _fgb :: f (g b)
 The good news is that we're now just dealing with `f`, `g`, `a` and `b`. The bad news is that it's not obvious what to do next. 
 
 Lets try to break the problem down. We need to figure out what `_fgb` should be. Given `f` and `g` are `Applicative`s, we have four choices to start us off (ignoring `pure`, since the last thing we need is _more_ nested `Applicatives`):
-1) `_fgb = ? <*> fga2b`
-2) `_fgb = ? <*> fga`
-3) `_fgb = ? <$> fga2b`
-4) `_fgb = ? <$> fga`
+1) `_fgb = _ <*> fga2b`
+2) `_fgb = _ <*> fga`
+3) `_fgb = _ <$> fga2b`
+4) `_fgb = _ <$> fga`
 
 It can't be `<$>` ("fmap"), as we'll end up inside `f` twice, once for `fga` and once for `fga2b`. So it must be `<*>`:
 
 ``` Haskell
 _fgb :: f (g b)
-_fgb = ? <*> ?
+_fgb = _ <*> _
 ```
 
 Whatever `_fgb` is, it needs to have a type of `f (g b)`. Given we're calling `<*>`, where `<*> :: f (a -> b) -> f a -> f b`, we probably need a non-function on the right. That means we have to start with option (3): `_fgb = ? <*> fga`. 
@@ -143,9 +143,7 @@ You know what `g (a -> b) -> g a -> g b` looks like? Yup! It looks like `<*>` fo
 
 That's it! We did it.
 
-But there's a problem. When we come back and look at this code, we'll be able to _understand_ it.
-
-Where's the fun in that?
+We _can_ take things further though, and condense a bunch of this code.
 
 First, lets drop `ga2b` from `(<*>)` in `wtf`, since it's the first parameter to both:
 
