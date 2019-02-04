@@ -101,7 +101,7 @@ Lets try to do it in a separate function called `lessScary`:
 Compose fga2b <*> Compose fga = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
-     lessScary fga2b = _ohboy
+     lessScary fga2b = _ohBoy
 ```
 
 This seems a little more manageable. We need to transform the contents of `f` from `g (a -> b)` into `g a -> g b`. That feels like a job for `<$>`!
@@ -110,14 +110,14 @@ This seems a little more manageable. We need to transform the contents of `f` fr
 (Compose fga2b) <*> (Compose fga) = Compose $ lessScary fga2b <*> fga
   where
      lessScary :: f (g (a -> b)) -> f (g a -> g b)
-     lessScary fga2b = _wtf <$> fga2b
+     lessScary fga2b = _whatThe <$> fga2b
 ```
 with the types:
 ``` Haskell
-_wtf :: g (a -> b) -> (g a -> g b)
+_whatThe :: g (a -> b) -> (g a -> g b)
 ```
 
-Yes yes yes! Lets break that `_wtf` out into another function:
+Yes yes yes! Lets break that `_whatThe` out into another function:
 
 ``` Haskell
 Compose fga2b <*> Compose fga = Compose $ lessScary fga2b <*> fga
